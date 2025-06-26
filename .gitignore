@@ -21,3 +21,6 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# FVM Version Cache
+.fvm/
