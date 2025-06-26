@@ -124,7 +124,7 @@ class SankeyComplexDiagramWidgetState
   }
 
   /// Custom label builder that creates styled labels
-  Widget _buildCustomLabel(BuildContext context, String label) {
+  Widget _buildCustomLabel(BuildContext context, String label, double value) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -133,19 +133,31 @@ class SankeyComplexDiagramWidgetState
         border: Border.all(color: Colors.blue, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: const Color.fromRGBO(0, 0, 0, 0.1),
             blurRadius: 4,
             offset: const Offset(2, 2),
           ),
         ],
       ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
+          ),
+          Text(
+            value.toStringAsFixed(0),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -171,7 +183,7 @@ class SankeyComplexDiagramWidgetState
               size: const Size(1000, 600),
               showLabels: true,
               labelBuilder: _buildCustomLabel,
-              labelPosition: LabelPosition.auto,
+              labelPosition: LabelPosition.center,
               labelMargin: 8.0,
             ),
           ],

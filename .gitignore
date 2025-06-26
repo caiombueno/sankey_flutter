@@ -26,3 +26,6 @@ coverage/
 CLAUDE.md
 .claude/
 claude-*
+
+# FVM
+.fvm/

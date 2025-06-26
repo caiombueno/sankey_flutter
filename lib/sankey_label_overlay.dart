@@ -5,7 +5,7 @@ import 'package:sankey_flutter/sankey_node.dart';
 import 'package:sankey_flutter/label_position.dart';
 
 /// Signature for label builder function
-typedef LabelBuilder = Widget Function(BuildContext context, String label);
+typedef LabelBuilder = Widget Function(BuildContext context, String label, double value);
 
 /// A widget that renders positioned labels over a Sankey diagram
 /// 
@@ -133,7 +133,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
     final key = _labelKeys[node.id]!;
     
     // Build the label widget
-    final labelWidget = widget.labelBuilder(context, label);
+    final labelWidget = widget.labelBuilder(context, label, node.value);
     
     // If measurement is not complete, render invisibly for measurement
     if (!_measurementComplete) {
@@ -190,7 +190,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
 /// Default label builder that creates a simple Text widget
 /// 
 /// This can be used as a fallback when no custom labelBuilder is provided
-Widget defaultLabelBuilder(BuildContext context, String label) {
+Widget defaultLabelBuilder(BuildContext context, String label, double value) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
     decoration: BoxDecoration(
@@ -199,7 +199,7 @@ Widget defaultLabelBuilder(BuildContext context, String label) {
       border: Border.all(color: Colors.grey.withOpacity(0.3)),
     ),
     child: Text(
-      label,
+      '$label (${value.toStringAsFixed(1)})',
       style: const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.bold,

@@ -33,10 +33,10 @@ void main() {
     });
 
     testWidgets('SankeyDiagramWidget with labelBuilder renders correctly', (WidgetTester tester) async {
-      Widget testLabelBuilder(BuildContext context, String label) {
+      Widget testLabelBuilder(BuildContext context, String label, double value) {
         return Container(
           padding: const EdgeInsets.all(4),
-          child: Text(label, style: const TextStyle(fontSize: 12)),
+          child: Text('$label ($value)', style: const TextStyle(fontSize: 12)),
         );
       }
 
@@ -66,8 +66,8 @@ void main() {
     });
 
     testWidgets('SankeyLabelOverlay renders labels correctly', (WidgetTester tester) async {
-      Widget testLabelBuilder(BuildContext context, String label) {
-        return Text(label, key: Key('label_$label'));
+      Widget testLabelBuilder(BuildContext context, String label, double value) {
+        return Text('$label ($value)', key: Key('label_$label'));
       }
 
       await tester.pumpWidget(
@@ -154,13 +154,14 @@ void main() {
 
     testWidgets('Default label builder creates correct widget', (WidgetTester tester) async {
       const testLabel = 'Test Label';
+      const testValue = 42.5;
       late Widget widget;
       
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
             builder: (BuildContext context) {
-              widget = defaultLabelBuilder(context, testLabel);
+              widget = defaultLabelBuilder(context, testLabel, testValue);
               return widget;
             },
           ),
@@ -175,7 +176,7 @@ void main() {
       expect(container.child, isA<Text>());
       
       final text = container.child as Text;
-      expect(text.data, equals(testLabel));
+      expect(text.data, equals('$testLabel (${testValue.toStringAsFixed(1)})'));
     });
   });
 }
