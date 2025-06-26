@@ -5,29 +5,30 @@ import 'package:sankey_flutter/sankey_node.dart';
 import 'package:sankey_flutter/label_position.dart';
 
 /// Signature for label builder function
-typedef LabelBuilder = Widget Function(BuildContext context, String label, double value);
+typedef LabelBuilder = Widget Function(
+    BuildContext context, String label, double value);
 
 /// A widget that renders positioned labels over a Sankey diagram
-/// 
+///
 /// This widget creates label widgets using the provided [labelBuilder] function
 /// and positions them according to the [labelPosition] relative to their
 /// corresponding nodes.
 class SankeyLabelOverlay extends StatefulWidget {
   /// List of nodes to create labels for
   final List<SankeyNode> nodes;
-  
+
   /// Function to build label widgets
   final LabelBuilder labelBuilder;
-  
+
   /// Position of labels relative to nodes
   final LabelPosition labelPosition;
-  
+
   /// Size of the canvas/container
   final Size canvasSize;
-  
+
   /// Margin distance from nodes
   final double margin;
-  
+
   /// Whether to show labels
   final bool showLabels;
 
@@ -48,10 +49,10 @@ class SankeyLabelOverlay extends StatefulWidget {
 class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
   /// Map to store measured label sizes
   final Map<int, Size> _labelSizes = {};
-  
+
   /// Map to store global keys for each label
-  final Map<int, GlobalKey> _labelKeys = {};
-  
+  final Map<dynamic, GlobalKey> _labelKeys = {};
+
   /// Whether the initial measurement pass is complete
   bool _measurementComplete = false;
 
@@ -64,7 +65,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
   @override
   void didUpdateWidget(SankeyLabelOverlay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Reset measurement if nodes changed
     if (widget.nodes != oldWidget.nodes) {
       _labelSizes.clear();
@@ -78,7 +79,9 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
     _labelKeys.clear();
     for (final node in widget.nodes) {
       if (node.label != null) {
-        _labelKeys[node.id] = GlobalKey();
+        final nodeId = node.id;
+
+        _labelKeys[nodeId] = GlobalKey();
       }
     }
   }
@@ -86,13 +89,13 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
   /// Measure label sizes after the first render
   void _measureLabels() {
     if (_measurementComplete) return;
-    
+
     bool allMeasured = true;
-    
+
     for (final entry in _labelKeys.entries) {
       final nodeId = entry.key;
       final key = entry.value;
-      
+
       final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         _labelSizes[nodeId] = renderBox.size;
@@ -100,7 +103,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
         allMeasured = false;
       }
     }
-    
+
     if (allMeasured && _labelSizes.isNotEmpty) {
       setState(() {
         _measurementComplete = true;
@@ -131,10 +134,10 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
   Widget _buildPositionedLabel(SankeyNode node) {
     final label = node.label!;
     final key = _labelKeys[node.id]!;
-    
+
     // Build the label widget
     final labelWidget = widget.labelBuilder(context, label, node.value);
-    
+
     // If measurement is not complete, render invisibly for measurement
     if (!_measurementComplete) {
       return Positioned(
@@ -151,13 +154,13 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
         ),
       );
     }
-    
+
     // Get the measured size
     final labelSize = _labelSizes[node.id];
     if (labelSize == null) {
       return const SizedBox.shrink();
     }
-    
+
     // Calculate position
     final offset = widget.labelPosition.calculateOffset(
       node,
@@ -165,7 +168,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
       widget.canvasSize,
       margin: widget.margin,
     );
-    
+
     // Check if the label would be visible
     final isVisible = widget.labelPosition.isVisibleInCanvas(
       node,
@@ -173,7 +176,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
       widget.canvasSize,
       margin: widget.margin,
     );
-    
+
     return Positioned(
       left: offset.dx,
       top: offset.dy,
@@ -188,7 +191,7 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
 }
 
 /// Default label builder that creates a simple Text widget
-/// 
+///
 /// This can be used as a fallback when no custom labelBuilder is provided
 Widget defaultLabelBuilder(BuildContext context, String label, double value) {
   return Container(
