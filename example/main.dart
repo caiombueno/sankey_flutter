@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:sankey_flutter/sankey_helpers.dart';
 import 'package:sankey_flutter/sankey_link.dart';
 import 'package:sankey_flutter/sankey_node.dart';
-import 'package:sankey_flutter/label_position.dart';
 
 /// The entry point of the Sankey Complex Example application
 ///
 /// This function initializes the app by running [SankeyComplexExampleApp]
 void main() {
-  runApp(const SankeyComplexExampleApp());
+  runApp(SankeyComplexExampleApp());
 }
 
 /// A stateless widget that defines the overall structure of the Sankey Diagram Example App
@@ -18,15 +17,13 @@ void main() {
 /// It sets the app title, theme, and uses a [Scaffold] to provide an app bar and a body
 /// that renders the Sankey diagram
 class SankeyComplexExampleApp extends StatelessWidget {
-  const SankeyComplexExampleApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Complex Sankey Diagram Example',
       home: Scaffold(
-        appBar: AppBar(title: const Text('Complex Sankey Diagram')),
-        body: const SankeyComplexDiagramWidget(),
+        appBar: AppBar(title: Text('Complex Sankey Diagram')),
+        body: SankeyComplexDiagramWidget(),
       ),
     );
   }
@@ -37,18 +34,16 @@ class SankeyComplexExampleApp extends StatelessWidget {
 /// This widget builds a Sankey diagram using data defined in the [initState] method
 /// It also handles user tap interactions to select nodes
 class SankeyComplexDiagramWidget extends StatefulWidget {
-  const SankeyComplexDiagramWidget({super.key});
-
   @override
-  SankeyComplexDiagramWidgetState createState() =>
-      SankeyComplexDiagramWidgetState();
+  _SankeyComplexDiagramWidgetState createState() =>
+      _SankeyComplexDiagramWidgetState();
 }
 
 /// The state class for [SankeyComplexDiagramWidget]
 ///
 /// It defines the nodes, links, node colors, and handles layout computation and tap interactions
 /// Changes in state trigger a repaint to reflect node selection and updates to the diagram
-class SankeyComplexDiagramWidgetState
+class _SankeyComplexDiagramWidgetState
     extends State<SankeyComplexDiagramWidget> {
   late List<SankeyNode> nodes;
   late List<SankeyLink> links;
@@ -123,58 +118,17 @@ class SankeyComplexDiagramWidgetState
     });
   }
 
-  /// Custom label builder that creates styled labels
-  Widget _buildCustomLabel(BuildContext context, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(2, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Sankey Diagram with Custom Labels',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SankeyDiagramWidget(
-              data: sankeyDataSet,
-              nodeColors: nodeColors,
-              selectedNodeId: selectedNodeId,
-              onNodeTap: _handleNodeTap,
-              size: const Size(1000, 600),
-              showLabels: true,
-              labelBuilder: _buildCustomLabel,
-              labelPosition: LabelPosition.auto,
-              labelMargin: 8.0,
-            ),
-          ],
+        child: SankeyDiagramWidget(
+          data: sankeyDataSet,
+          nodeColors: nodeColors,
+          selectedNodeId: selectedNodeId,
+          onNodeTap: _handleNodeTap,
+          size: const Size(1000, 600),
+          showLabels: false,
         ),
       ),
     );
