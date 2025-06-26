@@ -5,6 +5,8 @@ import 'package:sankey_flutter/sankey.dart';
 import 'package:sankey_flutter/sankey_node.dart';
 import 'package:sankey_flutter/sankey_link.dart';
 import 'package:sankey_flutter/interactive_sankey_painter.dart';
+import 'package:sankey_flutter/sankey_label_overlay.dart';
+import 'package:sankey_flutter/label_position.dart';
 
 /// Generates a configured [Sankey] layout engine
 ///
@@ -139,30 +141,31 @@ class SankeyDataSet {
 /// The [selectedNodeId] parameter indicates an optional node ID for which
 /// special highlighting may be applied.
 /// Returns an instance of [InteractiveSankeyPainter].
+/// 
+/// Note: Labels are not rendered by this painter. Use [SankeyLabelOverlay] for labels.
 InteractiveSankeyPainter buildInteractiveSankeyPainter({
   required List<SankeyNode> nodes,
   required List<SankeyLink> links,
   required Map<String, Color> nodeColors,
   int? selectedNodeId,
-  final bool showLabels = true,
 }) {
   return InteractiveSankeyPainter(
     nodes: nodes,
     links: links,
     nodeColors: nodeColors,
     selectedNodeId: selectedNodeId,
-    showLabels: showLabels,
   );
 }
 
-/// A widget that wraps an interactive Sankey diagram
+/// A widget that wraps an interactive Sankey diagram with flexible label positioning
 ///
 /// The [SankeyDiagramWidget] integrates gesture detection for tapping nodes and
-/// renders the diagram using a [CustomPaint] widget. It takes a [SankeyDataSet] as
-/// its data source, a node colors map, and an optional [selectedNodeId] along with a
-/// callback [onNodeTap] which is called when a node is tapped
+/// renders the diagram using a [CustomPaint] widget with an overlay for labels.
+/// It takes a [SankeyDataSet] as its data source, a node colors map, and an optional
+/// [selectedNodeId] along with a callback [onNodeTap] which is called when a node is tapped.
 ///
-/// The [size] parameter specifies the drawing area for the diagram
+/// Labels are rendered using the provided [labelBuilder] function and positioned
+/// according to [labelPosition]. The [size] parameter specifies the drawing area.
 class SankeyDiagramWidget extends StatelessWidget {
   final SankeyDataSet data;
   final Map<String, Color> nodeColors;
@@ -170,6 +173,9 @@ class SankeyDiagramWidget extends StatelessWidget {
   final Function(int?)? onNodeTap;
   final Size size;
   final bool showLabels;
+  final LabelBuilder? labelBuilder;
+  final LabelPosition labelPosition;
+  final double labelMargin;
 
   const SankeyDiagramWidget({
     Key? key,
@@ -179,6 +185,9 @@ class SankeyDiagramWidget extends StatelessWidget {
     this.onNodeTap,
     this.size = const Size(1000, 600),
     this.showLabels = true,
+    this.labelBuilder,
+    this.labelPosition = LabelPosition.auto,
+    this.labelMargin = 6.0,
   }) : super(key: key);
 
   @override
@@ -188,14 +197,32 @@ class SankeyDiagramWidget extends StatelessWidget {
         final tapped = detectTappedNode(data.nodes, details.localPosition);
         if (onNodeTap != null) onNodeTap!(tapped);
       },
-      child: CustomPaint(
-        size: size,
-        painter: buildInteractiveSankeyPainter(
-          nodes: data.nodes,
-          links: data.links,
-          nodeColors: nodeColors,
-          selectedNodeId: selectedNodeId,
-          showLabels: showLabels,
+      child: SizedBox(
+        width: size.width,
+        height: size.height,
+        child: Stack(
+          children: [
+            // Base diagram without labels
+            CustomPaint(
+              size: size,
+              painter: buildInteractiveSankeyPainter(
+                nodes: data.nodes,
+                links: data.links,
+                nodeColors: nodeColors,
+                selectedNodeId: selectedNodeId,
+              ),
+            ),
+            // Label overlay
+            if (showLabels && labelBuilder != null)
+              SankeyLabelOverlay(
+                nodes: data.nodes,
+                labelBuilder: labelBuilder!,
+                labelPosition: labelPosition,
+                canvasSize: size,
+                margin: labelMargin,
+                showLabels: showLabels,
+              ),
+          ],
         ),
       ),
     );
