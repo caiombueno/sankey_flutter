@@ -48,10 +48,10 @@ class SankeyLabelOverlay extends StatefulWidget {
 
 class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
   /// Map to store measured label sizes
-  final Map<int, Size> _labelSizes = {};
+  final Map<String, Size> _labelSizes = {};
 
   /// Map to store global keys for each label
-  final Map<dynamic, GlobalKey> _labelKeys = {};
+  final Map<String, GlobalKey> _labelKeys = {};
 
   /// Whether the initial measurement pass is complete
   bool _measurementComplete = false;
@@ -197,9 +197,9 @@ Widget defaultLabelBuilder(BuildContext context, String label, double value) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.9),
+      color: Colors.white.withValues(alpha: 0.9),
       borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: Colors.grey.withOpacity(0.3)),
+      border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
     ),
     child: Text(
       '$label (${value.toStringAsFixed(1)})',

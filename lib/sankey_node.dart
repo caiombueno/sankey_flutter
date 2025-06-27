@@ -4,7 +4,7 @@ import 'sankey_link.dart';
 
 /// A node in the Sankey diagram.
 class SankeyNode {
-  final dynamic id;
+  final String id;
   String? label;
   int index = 0;
   double value = 0.0;

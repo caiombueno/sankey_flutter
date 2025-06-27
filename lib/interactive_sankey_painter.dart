@@ -10,15 +10,15 @@ import 'package:sankey_flutter/sankey_painter.dart';
 /// - Supports custom node colors per label
 /// - Highlights connected links when a node is selected
 /// - Applies hover/focus feedback with opacity and borders
-/// 
-/// Note: This painter does not render labels. Use [SankeyLabelOverlay] 
+///
+/// Note: This painter does not render labels. Use [SankeyLabelOverlay]
 /// for label rendering with flexible positioning.
 class InteractiveSankeyPainter extends SankeyPainter {
   /// Map of node labels to specific colors
   final Map<String, Color> nodeColors;
 
   /// ID of the currently selected node, if any
-  final int? selectedNodeId;
+  final String? selectedNodeId;
 
   InteractiveSankeyPainter({
     required List<SankeyNode> nodes,
@@ -51,7 +51,7 @@ class InteractiveSankeyPainter extends SankeyPainter {
       // Highlight links connected to the selected node
       final isConnected = (selectedNodeId != null) &&
           (source.id == selectedNodeId || target.id == selectedNodeId);
-      blended = blended.withOpacity(isConnected ? 0.9 : 0.5);
+      blended = blended.withValues(alpha: isConnected ? 0.9 : 0.5);
 
       final linkPaint = Paint()
         ..color = blended

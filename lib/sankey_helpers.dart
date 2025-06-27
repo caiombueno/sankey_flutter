@@ -110,7 +110,7 @@ Map<String, Color> generateDefaultNodeColorMap(List<SankeyNode> nodes) {
 ///
 /// [nodes] is the list of [SankeyNode] objects and [tapPos] is the [Offset] of
 /// the tap event in the canvas coordinate space
-int? detectTappedNode(List<SankeyNode> nodes, Offset tapPos) {
+String? detectTappedNode(List<SankeyNode> nodes, Offset tapPos) {
   for (var node in nodes) {
     final rect =
         Rect.fromLTWH(node.x0, node.y0, node.x1 - node.x0, node.y1 - node.y0);
@@ -141,13 +141,13 @@ class SankeyDataSet {
 /// The [selectedNodeId] parameter indicates an optional node ID for which
 /// special highlighting may be applied.
 /// Returns an instance of [InteractiveSankeyPainter].
-/// 
+///
 /// Note: Labels are not rendered by this painter. Use [SankeyLabelOverlay] for labels.
 InteractiveSankeyPainter buildInteractiveSankeyPainter({
   required List<SankeyNode> nodes,
   required List<SankeyLink> links,
   required Map<String, Color> nodeColors,
-  int? selectedNodeId,
+  String? selectedNodeId,
 }) {
   return InteractiveSankeyPainter(
     nodes: nodes,
@@ -169,8 +169,8 @@ InteractiveSankeyPainter buildInteractiveSankeyPainter({
 class SankeyDiagramWidget extends StatelessWidget {
   final SankeyDataSet data;
   final Map<String, Color> nodeColors;
-  final int? selectedNodeId;
-  final Function(int?)? onNodeTap;
+  final String? selectedNodeId;
+  final Function(String?)? onNodeTap;
   final Size size;
   final bool showLabels;
   final LabelBuilder? labelBuilder;

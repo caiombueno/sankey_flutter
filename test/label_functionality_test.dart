@@ -17,8 +17,8 @@ void main() {
     setUp(() {
       // Create test nodes
       testNodes = [
-        SankeyNode(id: 0, label: 'Source'),
-        SankeyNode(id: 1, label: 'Target'),
+        SankeyNode(id: '0', label: 'Source'),
+        SankeyNode(id: '1', label: 'Target'),
       ];
 
       // Create test links
@@ -32,8 +32,10 @@ void main() {
       testDataSet.layout(sankey);
     });
 
-    testWidgets('SankeyDiagramWidget with labelBuilder renders correctly', (WidgetTester tester) async {
-      Widget testLabelBuilder(BuildContext context, String label, double value) {
+    testWidgets('SankeyDiagramWidget with labelBuilder renders correctly',
+        (WidgetTester tester) async {
+      Widget testLabelBuilder(
+          BuildContext context, String label, double value) {
         return Container(
           padding: const EdgeInsets.all(4),
           child: Text('$label ($value)', style: const TextStyle(fontSize: 12)),
@@ -65,8 +67,10 @@ void main() {
       expect(find.byType(CustomPaint), findsWidgets);
     });
 
-    testWidgets('SankeyLabelOverlay renders labels correctly', (WidgetTester tester) async {
-      Widget testLabelBuilder(BuildContext context, String label, double value) {
+    testWidgets('SankeyLabelOverlay renders labels correctly',
+        (WidgetTester tester) async {
+      Widget testLabelBuilder(
+          BuildContext context, String label, double value) {
         return Text('$label ($value)', key: Key('label_$label'));
       }
 
@@ -152,11 +156,12 @@ void main() {
       expect(isLargeLabelVisible, isA<bool>());
     });
 
-    testWidgets('Default label builder creates correct widget', (WidgetTester tester) async {
+    testWidgets('Default label builder creates correct widget',
+        (WidgetTester tester) async {
       const testLabel = 'Test Label';
       const testValue = 42.5;
       late Widget widget;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -174,7 +179,7 @@ void main() {
       expect(container.padding, isA<EdgeInsets>());
       expect(container.decoration, isA<BoxDecoration>());
       expect(container.child, isA<Text>());
-      
+
       final text = container.child as Text;
       expect(text.data, equals('$testLabel (${testValue.toStringAsFixed(1)})'));
     });

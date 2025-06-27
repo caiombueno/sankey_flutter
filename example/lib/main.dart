@@ -53,7 +53,7 @@ class SankeyComplexDiagramWidgetState
   late List<SankeyNode> nodes;
   late List<SankeyLink> links;
   late Map<String, Color> nodeColors;
-  int? selectedNodeId;
+  String? selectedNodeId;
   late SankeyDataSet sankeyDataSet;
 
   @override
@@ -62,21 +62,21 @@ class SankeyComplexDiagramWidgetState
 
     // Define the list of nodes across multiple layers
     nodes = [
-      SankeyNode(id: 0, label: 'Salary'),
-      SankeyNode(id: 1, label: 'Freelance'),
-      SankeyNode(id: 2, label: 'Investments'),
-      SankeyNode(id: 3, label: 'Total Income'),
-      SankeyNode(id: 13, label: 'Mandatory Expenses'),
-      SankeyNode(id: 14, label: 'Discretionary Expenses'),
-      SankeyNode(id: 4, label: 'Taxes'),
-      SankeyNode(id: 5, label: 'Essentials'),
-      SankeyNode(id: 6, label: 'Discretionary'),
-      SankeyNode(id: 7, label: 'Savings'),
-      SankeyNode(id: 8, label: 'Debt'),
-      SankeyNode(id: 9, label: 'Investments Reinvested'),
-      SankeyNode(id: 10, label: 'Healthcare'),
-      SankeyNode(id: 11, label: 'Education'),
-      SankeyNode(id: 12, label: 'Donations'),
+      SankeyNode(id: '0', label: 'Salary'),
+      SankeyNode(id: '1', label: 'Freelance'),
+      SankeyNode(id: '2', label: 'Investments'),
+      SankeyNode(id: '3', label: 'Total Income'),
+      SankeyNode(id: '13', label: 'Mandatory Expenses'),
+      SankeyNode(id: '14', label: 'Discretionary Expenses'),
+      SankeyNode(id: '4', label: 'Taxes'),
+      SankeyNode(id: '5', label: 'Essentials'),
+      SankeyNode(id: '6', label: 'Discretionary'),
+      SankeyNode(id: '7', label: 'Savings'),
+      SankeyNode(id: '8', label: 'Debt'),
+      SankeyNode(id: '9', label: 'Investments Reinvested'),
+      SankeyNode(id: '10', label: 'Healthcare'),
+      SankeyNode(id: '11', label: 'Education'),
+      SankeyNode(id: '12', label: 'Donations'),
     ];
 
     // Define the links between nodes with specified flow values
@@ -117,7 +117,7 @@ class SankeyComplexDiagramWidgetState
   ///
   /// When a node is tapped, its [id] is stored in [selectedNodeId],
   /// triggering a rebuild that highlights the node
-  void _handleNodeTap(int? nodeId) {
+  void _handleNodeTap(String? nodeId) {
     setState(() {
       selectedNodeId = nodeId;
     });

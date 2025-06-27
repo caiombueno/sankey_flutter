@@ -89,7 +89,7 @@ void main() {
     final rawLinks = energy['links'] as List;
 
     final nodes = rawNodes.asMap().entries.map((entry) {
-      return SankeyNode(id: entry.key);
+      return SankeyNode(id: entry.key.toString());
     }).toList();
 
     final links = rawLinks.asMap().entries.map((entry) {
