@@ -201,6 +201,7 @@ class SankeyDiagramWidget extends StatelessWidget {
         width: size.width,
         height: size.height,
         child: Stack(
+          clipBehavior: Clip.none, // Allow labels to extend beyond diagram bounds
           children: [
             // Base diagram without labels
             CustomPaint(

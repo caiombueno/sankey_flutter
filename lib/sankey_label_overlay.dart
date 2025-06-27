@@ -1,5 +1,6 @@
 // lib/sankey_label_overlay.dart
 
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:sankey_flutter/sankey_node.dart';
 import 'package:sankey_flutter/label_position.dart';
@@ -55,6 +56,12 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
 
   /// Whether the initial measurement pass is complete
   bool _measurementComplete = false;
+  
+  /// Calculated padding required for centered labels
+  EdgeInsets _calculatedPadding = EdgeInsets.zero;
+  
+  /// Getter for accessing calculated padding from parent widgets
+  EdgeInsets get calculatedPadding => _calculatedPadding;
 
   @override
   void initState() {
@@ -105,10 +112,61 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
     }
 
     if (allMeasured && _labelSizes.isNotEmpty) {
+      _calculateRequiredPadding();
       setState(() {
         _measurementComplete = true;
       });
     }
+  }
+  
+  /// Calculate the padding required to ensure centered labels are fully visible
+  void _calculateRequiredPadding() {
+    if (widget.labelPosition != LabelPosition.center) {
+      _calculatedPadding = EdgeInsets.zero;
+      return;
+    }
+    
+    double maxLeftPadding = 0;
+    double maxRightPadding = 0;
+    double maxTopPadding = 0;
+    double maxBottomPadding = 0;
+    
+    for (final node in widget.nodes) {
+      final labelSize = _labelSizes[node.id];
+      if (labelSize == null || node.label == null) continue;
+      
+      // Calculate centered position
+      final nodeCenter = Offset(
+        node.x0 + (node.x1 - node.x0) / 2,
+        node.y0 + (node.y1 - node.y0) / 2,
+      );
+      
+      final labelLeft = nodeCenter.dx - labelSize.width / 2;
+      final labelRight = nodeCenter.dx + labelSize.width / 2;
+      final labelTop = nodeCenter.dy - labelSize.height / 2;
+      final labelBottom = nodeCenter.dy + labelSize.height / 2;
+      
+      // Calculate required padding to keep labels within bounds
+      if (labelLeft < 0) {
+        maxLeftPadding = math.max(maxLeftPadding, -labelLeft + widget.margin);
+      }
+      if (labelRight > widget.canvasSize.width) {
+        maxRightPadding = math.max(maxRightPadding, labelRight - widget.canvasSize.width + widget.margin);
+      }
+      if (labelTop < 0) {
+        maxTopPadding = math.max(maxTopPadding, -labelTop + widget.margin);
+      }
+      if (labelBottom > widget.canvasSize.height) {
+        maxBottomPadding = math.max(maxBottomPadding, labelBottom - widget.canvasSize.height + widget.margin);
+      }
+    }
+    
+    _calculatedPadding = EdgeInsets.only(
+      left: maxLeftPadding,
+      right: maxRightPadding,
+      top: maxTopPadding,
+      bottom: maxBottomPadding,
+    );
   }
 
   @override
@@ -122,11 +180,16 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureLabels());
     }
 
-    return Stack(
-      children: widget.nodes
-          .where((node) => node.label != null)
-          .map((node) => _buildPositionedLabel(node))
-          .toList(),
+    return SizedBox(
+      width: widget.canvasSize.width,
+      height: widget.canvasSize.height,
+      child: Stack(
+        clipBehavior: Clip.none, // Allow labels to extend beyond canvas bounds
+        children: widget.nodes
+            .where((node) => node.label != null)
+            .map((node) => _buildPositionedLabel(node))
+            .toList(),
+      ),
     );
   }
 
@@ -169,13 +232,14 @@ class _SankeyLabelOverlayState extends State<SankeyLabelOverlay> {
       margin: widget.margin,
     );
 
-    // Check if the label would be visible
-    final isVisible = widget.labelPosition.isVisibleInCanvas(
-      node,
-      labelSize,
-      widget.canvasSize,
-      margin: widget.margin,
-    );
+    // For center positioning, always show labels at full opacity since they're properly centered
+    final isVisible = widget.labelPosition == LabelPosition.center || 
+        widget.labelPosition.isVisibleInCanvas(
+          node,
+          labelSize,
+          widget.canvasSize,
+          margin: widget.margin,
+        );
 
     return Positioned(
       left: offset.dx,
